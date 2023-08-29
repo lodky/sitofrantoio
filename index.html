@@ -105,14 +105,12 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         tabellaPersone.push(newRow);
       }
 
-      // Reset dei campi del form
       document.getElementById("nome").value = '';
       document.getElementById("cognome").value = '';
       document.getElementById("orario").value = '';
       document.getElementById("quintali").value = '';
       document.getElementById("litri").value = '';
 
-      // Salva i dati
       salvaDati();
     }
 
@@ -133,7 +131,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
       }
       row.parentNode.removeChild(row);
 
-      // Salva i dati
       salvaDati();
     }
 
@@ -181,7 +178,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
       <th>Modifica</th>
       <th>Elimina</th>
     </tr>
-    <!-- Qui verranno aggiunte le persone -->
   </table>
+
+  <!-- Carica i dati salvati al caricamento della pagina -->
+  <script>
+    window.onload = function() {
+      caricaDatiSalvati();
+    };
+  </script>
 </body>
 </html>
