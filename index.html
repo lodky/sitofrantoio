@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Prenotazioni Raccolta Olive</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      margin: 0;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input, button {
+      padding: 5px;
+      margin-top: 5px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #333;
+      color: white;
+    }
+
+    button {
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+  </style>
+  <script>
+    var personaInModifica = null;
+    var tabellaPersone = [];
+
+    function caricaDatiSalvati() {
+      var datiSalvati = localStorage.getItem("dati_prenotazioni");
+      if (datiSalvati) {
+        tabellaPersone = JSON.parse(datiSalvati);
+        aggiornaTabella();
+      }
+    }
+
+    function salvaDati() {
+      localStorage.setItem("dati_prenotazioni", JSON.stringify(tabellaPersone));
+    }
+
+    function aggiungiPersona() {
+      var nome = document.getElementById("nome").value;
+      var cognome = document.getElementById("cognome").value;
+      var orario = document.getElementById("orario").value;
+      var quintaliOlive = parseFloat(document.getElementById("quintali").value);
+      var litriOlio = parseFloat(document.getElementById("litri").value);
+
+      if (personaInModifica) {
+        personaInModifica.cells[0].textContent = nome;
+        personaInModifica.cells[1].textContent = cognome;
+        personaInModifica.cells[2].textContent = orario;
+        personaInModifica.cells[3].textContent = quintaliOlive;
+        personaInModifica.cells[4].textContent = litriOlio;
+        personaInModifica.cells[5].textContent = (litriOlio / quintaliOlive).toFixed(2);
+        personaInModifica = null;
+      } else {
+        var table = document.getElementById("tabella-persone");
+        var newRow = table.insertRow(-1);
+        newRow.insertCell(0).textContent = nome;
+        newRow.insertCell(1).textContent = cognome;
+        newRow.insertCell(2).textContent = orario;
+        newRow.insertCell(3).textContent = quintaliOlive;
+        newRow.insertCell(4).textContent = litriOlio;
+        newRow.insertCell(5).textContent = (litriOlio / quintaliOlive).toFixed(2);
+        newRow.insertCell(6).innerHTML = '<button onclick="modificaPersona(this)">Modifica</button>';
+        newRow.insertCell(7).innerHTML = '<button onclick="eliminaPersona(this)">Elimina</button>';
+        tabellaPersone.push(newRow);
+      }
+
+      // Reset dei campi del form
+      document.getElementById("nome").value = '';
+      document.getElementById("cognome").value = '';
+      document.getElementById("orario").value = '';
+      document.getElementById("quintali").value = '';
+      document.getElementById("litri").value = '';
+
+      // Salva i dati
+      salvaDati();
+    }
+
+    function modificaPersona(button) {
+      personaInModifica = button.parentNode.parentNode;
+      document.getElementById("nome").value = personaInModifica.cells[0].textContent;
+      document.getElementById("cognome").value = personaInModifica.cells[1].textContent;
+      document.getElementById("orario").value = personaInModifica.cells[2].textContent;
+      document.getElementById("quintali").value = personaInModifica.cells[3].textContent;
+      document.getElementById("litri").value = personaInModifica.cells[4].textContent;
+    }
+
+    function eliminaPersona(button) {
+      var row = button.parentNode.parentNode;
+      var index = tabellaPersone.indexOf(row);
+      if (index > -1) {
+        tabellaPersone.splice(index, 1);
+      }
+      row.parentNode.removeChild(row);
+
+      // Salva i dati
+      salvaDati();
+    }
+
+    function aggiornaTabella() {
+      var table = document.getElementById("tabella-persone");
+      table.innerHTML = "<tr><th>Nome</th><th>Cognome</th><th>Orario</th><th>Quintali Olive</th><th>Litri Olio</th><th>Resa</th><th>Modifica</th><th>Elimina</th></tr>";
+      tabellaPersone.forEach(function(row) {
+        table.appendChild(row);
+      });
+    }
+
+    window.onload = function() {
+      caricaDatiSalvati();
+    };
+  </script>
+</head>
+<body>
+  <h1>Prenotazioni Raccolta Olive</h1>
+  <label for="nome">Nome:</label>
+  <input type="text" id="nome"><br>
+
+  <label for="cognome">Cognome:</label>
+  <input type="text" id="cognome"><br>
+
+  <label for="orario">Orario di prenotazione:</label>
+  <input type="time" id="orario"><br>
+
+  <label for="quintali">Quintali di olive:</label>
+  <input type="number" step="0.01" id="quintali"><br>
+
+  <label for="litri">Litri di olio:</label>
+  <input type="number" step="0.01" id="litri"><br>
+
+  <button onclick="aggiungiPersona()">Aggiungi Persona</button>
+
+  <h2>Lista Persone</h2>
+  <table id="tabella-persone">
+    <tr>
+      <th>Nome</th>
+      <th>Cognome</th>
+      <th>Orario</th>
+      <th>Quintali Olive</th>
+      <th>Litri Olio</th>
+      <th>Resa</th>
+      <th>Modifica</th>
+      <th>Elimina</th>
+    </tr>
+    <!-- Qui verranno aggiunte le persone -->
+  </table>
+</body>
+</html>
